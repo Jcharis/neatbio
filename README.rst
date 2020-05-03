@@ -128,8 +128,9 @@ Reading FASTA Files
 Documentation
 -------------
 
--  Please read the documentation for more information on what neatbio
-   does and how to use is for your needs.
+-  Please read the
+   `documentation <https://github.com/Jcharis/neatbio/wiki>`__ for more
+   information on what neatbio does and how to use is for your needs.
 
 More Features To Add
 --------------------

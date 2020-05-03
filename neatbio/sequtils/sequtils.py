@@ -2,7 +2,7 @@
 from collections import Counter
 from itertools import groupby
 
-# Translate
+# Translate Table
 CodonTable = {
     # 'M' - START, '*' - STOP
     "GCT": "A", "GCC": "A", "GCA": "A", "GCG": "A",
@@ -79,7 +79,7 @@ def gc_content(seq):
     result = float(str(seq).count('G') + str(seq).count('C'))/len(seq) *100
     return result
 
-# AT Content
+
 def at_content(seq):
     """Return AT Content of Sequence"""
     result = float(str(seq).count('A') + str(seq).count('T'))/len(seq) *100

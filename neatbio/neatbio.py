@@ -1,348 +1,372 @@
 #!/usr/bin/env python
-import sys
 import random
+import sys
+
 
 # Translate
 CodonTable = {
     # 'M' - START, '*' - STOP
-    "GCT": "A", "GCC": "A", "GCA": "A", "GCG": "A",
-    "TGT": "C", "TGC": "C",
-    "GAT": "D", "GAC": "D",
-    "GAA": "E", "GAG": "E",
-    "TTT": "F", "TTC": "F",
-    "GGT": "G", "GGC": "G", "GGA": "G", "GGG": "G",
-    "CAT": "H", "CAC": "H",
-    "ATA": "I", "ATT": "I", "ATC": "I",
-    "AAA": "K", "AAG": "K",
-    "TTA": "L", "TTG": "L", "CTT": "L", "CTC": "L", "CTA": "L", "CTG": "L",
+    "GCT": "A",
+    "GCC": "A",
+    "GCA": "A",
+    "GCG": "A",
+    "TGT": "C",
+    "TGC": "C",
+    "GAT": "D",
+    "GAC": "D",
+    "GAA": "E",
+    "GAG": "E",
+    "TTT": "F",
+    "TTC": "F",
+    "GGT": "G",
+    "GGC": "G",
+    "GGA": "G",
+    "GGG": "G",
+    "CAT": "H",
+    "CAC": "H",
+    "ATA": "I",
+    "ATT": "I",
+    "ATC": "I",
+    "AAA": "K",
+    "AAG": "K",
+    "TTA": "L",
+    "TTG": "L",
+    "CTT": "L",
+    "CTC": "L",
+    "CTA": "L",
+    "CTG": "L",
     "ATG": "M",
-    "AAT": "N", "AAC": "N",
-    "CCT": "P", "CCC": "P", "CCA": "P", "CCG": "P",
-    "CAA": "Q", "CAG": "Q",
-    "CGT": "R", "CGC": "R", "CGA": "R", "CGG": "R", "AGA": "R", "AGG": "R",
-    "TCT": "S", "TCC": "S", "TCA": "S", "TCG": "S", "AGT": "S", "AGC": "S",
-    "ACT": "T", "ACC": "T", "ACA": "T", "ACG": "T",
-    "GTT": "V", "GTC": "V", "GTA": "V", "GTG": "V",
+    "AAT": "N",
+    "AAC": "N",
+    "CCT": "P",
+    "CCC": "P",
+    "CCA": "P",
+    "CCG": "P",
+    "CAA": "Q",
+    "CAG": "Q",
+    "CGT": "R",
+    "CGC": "R",
+    "CGA": "R",
+    "CGG": "R",
+    "AGA": "R",
+    "AGG": "R",
+    "TCT": "S",
+    "TCC": "S",
+    "TCA": "S",
+    "TCG": "S",
+    "AGT": "S",
+    "AGC": "S",
+    "ACT": "T",
+    "ACC": "T",
+    "ACA": "T",
+    "ACG": "T",
+    "GTT": "V",
+    "GTC": "V",
+    "GTA": "V",
+    "GTG": "V",
     "TGG": "W",
-    "TAT": "Y", "TAC": "Y",
-    "TAA": "*", "TAG": "*", "TGA": "*"
+    "TAT": "Y",
+    "TAC": "Y",
+    "TAA": "*",
+    "TAG": "*",
+    "TGA": "*",
 }
 
 
-full_amino_acid_name ={'Alanine': 'Ala',
- 'Cysteine': 'Cys',
- 'Aspartic acid': 'Asp',
- 'Glutamic acid': 'Glu',
- 'Phenylalanine': 'Phe',
- 'Glycine': 'Gly',
- 'Histidine': 'His',
- 'Isoleucine': 'Ile',
- 'Lysine': 'Lys',
- 'Leucine': 'Leu',
- 'Methionine': 'Met',
- 'Asparagine': 'Asn',
- 'Proline': 'Pro',
- 'Glutamine': 'Gln',
- 'Arginine': 'Arg',
- 'Serine': 'Ser',
- 'Threonine': 'Thr',
- 'Valine': 'Val',
- 'Tryptophan': 'Trp',
- 'Tyrosine': 'Tyr'}
-
-aa3_to1_dict  = {'Ala': 'A',
- 'Cys': 'C',
- 'Asp': 'D',
- 'Glu': 'E',
- 'Phe': 'F',
- 'Gly': 'G',
- 'His': 'H',
- 'Ile': 'I',
- 'Lys': 'K',
- 'Leu': 'L',
- 'Met': 'M',
- 'Asn': 'N',
- 'Pro': 'P',
- 'Gln': 'Q',
- 'Arg': 'R',
- 'Ser': 'S',
- 'Thr': 'T',
- 'Val': 'V',
- 'Trp': 'W',
- 'Tyr': 'Y'}
-
 class Sequence(object):
-	"""docstring for Sequence"""
+    """Create a Valid Sequence for DNA,RNA
+
+    example: seq1 = Sequence('ATGC')
+
+    """
+
+    def __init__(self, seq=None):
+        """Creat A Sequence Object
+        
+        Arguments:
+        - seq - Sequence required string
+
+        >>>import neatbio as nt
+        >>>seq1 = nt.Sequence("ATGC")
+        >>>seq1
+        Sequence(seq="ATGC")
+
+        """
+        super(Sequence, self).__init__()
+        self.seq = seq
+
+        # To enforce a string storage
+        if not isinstance(self.__validate_seq(seq), str):
+            raise TypeError("The sequence data given to a Sequence object should "
+                "be a string (not another Sequence object etc)","nor a non Nucleotide [A,C,T,G,U]")
+    
+
+    def __repr__(self):
+        return "Sequence(seq='{}')".format(self.seq)
+
+    def __str__(self):
+        return self.seq
+
+    def __validate_seq(self, seq):
+        base_nucleotide = ["A", "T", "G", "C", "U"]
+        real_seq = seq.upper()
+        for base in real_seq:
+            if base not in base_nucleotide:
+                return False
+        return real_seq
+
+    def __len__(self):
+        return len(self.seq)
+
+    def __contains__(self, sub_char):
+        return sub_char in str(self)
+
+    def __getitem__(self, index):
+        if isinstance(index, int):
+            return self.seq[index]
+
+    def __add__(self,other):
+        if isinstance(other,Sequence):# works instead of a str
+            return self.__class__(str(self.seq) + str(other.seq))
+        else:
+            # return str(self.seq) + str(other.seq)
+            return 'Error: NotImplemented Error, Add a Valid Sequence'
+
+    def __hash__(self):
+        """Return a Hash of the sequences for string comparison"""
+        return hash(str(self))
 
 
-	def __init__(self, seq=None):
-		super(Sequence, self).__init__()
-		self.seq = seq
-		# Enforce string storage
-		if not isinstance(self._validate_seq(seq), str):
-			raise TypeError("The sequence data given to a Sequence object should "
-				"be a string (not another Sequence object etc)","nor a non Nucleotide [A,C,T,G,U]")
-	
+
+    ### Basic Fxn
+    # This include basic string count,find,index
+
+    def count(self, subseq, start=0, end=sys.maxsize):
+        """Return the Count of the Number of Nucleotide in A Sequence"""
+        return str(self).count(subseq, start, end)
+
+    def find(self, subseq, start=0, end=sys.maxsize):
+        """Find the Position of A  Nucleotide in A Sequence"""
+        return str(self).find(subseq, start, end)
+
+    def rfind(self, subseq, start=0, end=sys.maxsize):
+        """Find the Position of A  Nucleotide in A Sequence From the Right"""
+        return str(self).rfind(subseq, start, end)
+
+    def index(self, subseq, start=0, end=sys.maxsize):
+        """Find the Index/Position of A  Nucleotide in A Sequence"""
+        return str(self).index(subseq, start, end)
+
+    def rindex(self, subseq, start=0, end=sys.maxsize):
+        """Find the Index/Position of A  Nucleotide in A Sequence From the Right"""
+        return str(self).rindex(subseq, start, end)
+
+    def encode(self, encoding="utf-8",errors="strict"):
+        """Returns an encoded version of the sequence as a byte object
+        >>>import neatbio as nt
+        >>>nt.Sequence("ATGC").encode("ascii")
+        b'ATGC'
+
+        """
+        return str(self).encode(encoding,errors)
 
 
-	def __repr__(self):
-		return 'Sequence(seq="{}")'.format(self.seq)
+    
+    #### Main Functions For DNA/RNA Sequencing
+    def get_symbol_frequency(self):
+        """Get the Frequency of A Nucleotide in a Sequence """
+        base_dict = {"A": 0, "T": 0, "G": 0, "C": 0}  # initial score
+        for base in self.seq:
+            if self.__validate_seq(base) != False:
+                base_dict[base] += 1
+            else:
+                return "NucleotideError: {} not a nucleotide ['A,T,G,C']".format(base)
+            return base_dict
 
-	def __str__(self):
-		return self.seq 
+    @property
+    def gc(self):
+        """GC Content of Sequence """
+        result = (
+            float(str(self.seq).count("G") + str(self.seq).count("C"))
+            / len(self.seq)
+            * 100
+        )
+        return result
 
-	def __len__(self):
-		return len(self.seq)
+    @property
+    def at(self):
+        """AT Content of Sequence """
+        result = (
+            float(str(self.seq).count("A") + str(self.seq).count("T"))
+            / len(self.seq)
+            * 100
+        )
+        return result
 
-	def __contains__(self,sub_char):
-		return sub_char in str(self)
+   
+    def at_frequency(self):
+        """AT Count/Frequence of Sequence"""
+        result = str(self.seq).count("A") + str(self.seq).count("T")
+        return result
 
-	def __getitem__(self,index):
-		if isinstance(index,int):
-			return self.seq[index]
-		else:
-			return Sequence(self.seq[index])
-
-	def __add__(self,other):
-		if isinstance(other,Sequence):# works instead of a str
-			return self.__class__(str(self.seq) + str(other.seq))
-		else:
-			# return str(self.seq) + str(other.seq)
-			return 'Error: NotImplemented Error, Add a Valid Sequence'
-
-	# Basic Fxn
-	def count(self,subseq,start=0,end=sys.maxsize):
-		return str(self).count(subseq,start,end)
-
-	def find(self,subseq,start=0,end=sys.maxsize):
-		return str(self).find(subseq,start,end)
-
-	def rfind(self,subseq,start=0,end=sys.maxsize):
-		return str(self).rfind(subseq,start,end)
-
-	def index(self,subseq,start=0,end=sys.maxsize):
-		return str(self).index(subseq,start,end)
-
-	def rindex(self,subseq,start=0,end=sys.maxsize):
-		return str(self).rindex(subseq,start,end)
-
-
-	def _validate_seq(self,seq):
-	    base_nucleotide = ["A","T","G","C","U"]
-	    real_seq = seq.upper()
-	    for base in real_seq:
-	        if base not in base_nucleotide:
-	            return False
-	    return real_seq
-
-	def _validate(self):
-		base_nucleotide = ["A","T","G","C","U"]
-		return set(base_nucleotide).issuperset(self.seq)
-		
-
-	def get_symbol_frequency(self):
-	    base_dict = {"A":0,"T":0,"G":0,"C":0} # initial score
-	    for base in self.seq:
-	        if self._validate_seq(base) != False:
-	            base_dict[base] +=1
-	        else:
-	            return "NucleotideError: {} not a nucleotide ['A,T,G,C']".format(base)
-	    return base_dict
-
-	def hamming_distance(self,other):
-		if isinstance(other,Sequence):# works instead of a str
-			return len([(x,y) for x,y in zip(self.seq,other) if x !=y])
-		else:
-			return f"Error: Not Implemented '{other}' Must be of a Sequence Object"
-
-	def randomize(self):
-		result = ''.join([random.choice(list(self.seq)) for x in range(len(self.seq)) ])
-		return self.__init__(result) # Reinit as a valid seq
-
-	def random_gen(self,length=9):
-		result = ''.join([random.choice(list(self.seq)) for x in range(length) ])
-		return result # Reinit as a valid seq
-	
-	# GC Content
-	def gc(self):
-	    result = float(str(self.seq).count('G') + str(self.seq).count('C'))/len(self.seq) *100
-	    return result
+ 
+    def gc_frequency(self):
+        """GC Count/Frequence of Sequence """
+        result = str(self.seq).count("G") + str(self.seq).count("C")
+        return result
+ 
 
 
-	# GC Content
-	def at(self):
-	    result = float(str(self.seq).count('A') + str(self.seq).count('T'))/len(self.seq) *100
-	    return result
+    def complement(self):
+        """Return Complement of Sequence """
+        base_pairs = {"A": "T", "T": "A", "G": "C", "C": "G"}
+        comp_pairs = [base_pairs[a] for a in self.seq if a in base_pairs.keys()]
+        return "".join(comp_pairs)
 
+    def reverse_complement(self):
+        """Return A Reverse Complement of Sequence """
+        base_pairs = {"A": "T", "T": "A", "G": "C", "C": "G"}
+        comp_pairs = [base_pairs[a] for a in self.seq if a in base_pairs.keys()]
+        reverse_pairs = "".join(comp_pairs)[::-1]
+        return reverse_pairs
 
-	def complement(self):
-	    base_pairs = {"A":"T","T":"A","G":"C","C":"G"}
-	    comp_pairs = [base_pairs[a] for a in self.seq if a in base_pairs.keys()]
-	    return "".join(comp_pairs)
+    def transcribe(self):
+        """Transcribe Sequence into mRNA """
+        mrna_result = self.seq.replace("T", "U")
+        return mrna_result
 
-	def reverse_complement(self):
-	    base_pairs = {"A":"T","T":"A","G":"C","C":"G"}
-	    comp_pairs = [base_pairs[a] for a in self.seq if a in base_pairs.keys()]
-	    reverse_pairs = "".join(comp_pairs)[::-1]
-	    return reverse_pairs
+    def back_transcribe(self):
+        """Transcribe mRNA Sequence back into DNA """
+        dna_result = self.seq.replace("U", "T")
+        return dna_result
 
-	def transcribe(self):
-	    mrna_result = self.seq.replace("T","U")
-	    return mrna_result
+    def translate(self, start_pos=0):
+        """Translate Sequence into Protein/Amino Acids"""
+        amino_acids_list = [
+            CodonTable[self.seq[pos : pos + 3]]
+            for pos in range(start_pos, len(self.seq) - 2, 3)
+        ]
+        return "".join(amino_acids_list)
 
-	def translate(self,start_pos=0):
-	    amino_acids_list =[CodonTable[self.seq[pos:pos + 3]] for pos in range(start_pos,len(self.seq)-2,3)]
-	    return "".join(amino_acids_list)
+    def hamming_distance(self,other):
+        """Returns the edit distance for similarity using Hamming Distance of 2 Equal Length Sequence"""
+        if isinstance(other,Sequence):# works instead of a str
+            return len([(x,y) for x,y in zip(self.seq,other) if x !=y])
+        else:
+            return f"Error: Not Implemented '{other}' Must be of a Sequence Object"
 
+    def randomize(self):
+        """Randomly Change the Location of Each Nucletide
+
+        >>> import neatbio as nt
+        >>> seq1 = nt.Sequence("ATGC")
+        >>> seq1.randomize()
+        >>> seq1
+        Sequence(seq='CACT')
+
+        """
+        result = ''.join([random.choice(list(self.seq)) for x in range(len(self.seq)) ])
+        return self.__init__(result) # Reinit as a valid seq
+
+    def random_gen(self,length=9):
+        """Randomly Generate A Sequence of N- Length"""
+        result = ''.join([random.choice(list(self.seq)) for x in range(length) ])
+        return result 
 
 
 class ProteinSeq(object):
-	"""docstring for ProteinSeq"""
-	def __init__(self, seq):
-		super(ProteinSeq, self).__init__()
-		self.seq = seq
-		
-		# Enforce string storage
-		if not isinstance(self._validate_protein_seq(seq), str):
-			raise TypeError("The sequence data given to a Sequence object should "
-				"be a string (not another Sequence object etc)","nor a non Nucleotide [A,C,T,G,U]")
-	
+    def __init__(self, seq=None):
+        """Creat A Protein Sequence Object
+        
+        Arguments:
+        - seq - Sequence required string
+
+        >>>import neatbio as nt
+        >>>seq1 = nt.ProteinSeq("MIT")
+        >>>seq1
+        ProteinSeq(seq="MIT")
+
+        """
+        super(ProteinSeq, self).__init__()
+        self.seq = seq
+
+        # To enforce a string storage
+        if not isinstance(self.__validate_protein_seq(seq), str):
+            raise TypeError("The sequence data given to a Protein Sequence object should "
+                "be a string (not another Protein Sequence object etc)","nor a non Amino Acid Code")
+    
+
+    def __repr__(self):
+        return "ProteinSeq(seq='{}')".format(self.seq)
+
+    def __str__(self):
+        return self.seq
+
+    def __validate_protein_seq(self, seq):
+        base_amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y','*','-']
+        real_seq = seq.upper()
+        for base in real_seq:
+            if base not in base_amino_acids:
+                return False
+        return real_seq
+
+    def __len__(self):
+        return len(self.seq)
+
+    def __contains__(self, sub_char):
+        return sub_char in str(self)
+
+    def __getitem__(self, index):
+        if isinstance(index, int):
+            return self.seq[index]
+
+    def __add__(self,other):
+        if isinstance(other,ProteinSeq):# works instead of a str
+            return self.__class__(str(self.seq) + str(other.seq))
+        else:
+            # return str(self.seq) + str(other.seq)
+            return 'Error: NotImplemented Error, Add a Valid Protein Sequence'
+
+    def __hash__(self):
+        """Return a Hash of the sequences for string comparison"""
+        return hash(str(self))
+
+    # Get Keys
+    def __get_codon_key(self,val):
+        my_dict = CodonTable
+        for key,value in my_dict.items():
+            if val == value:
+                return key
 
 
-	def __repr__(self):
-		return 'ProteinSeq(seq="{}")'.format(self.seq)
+    def get_symbol_frequency(self):
+        codon_base_dict = {'A': 0,'C': 0,'D': 0,'E': 0,'F': 0,'G': 0,'H': 0,'I': 0,'K': 0,'L': 0,'M': 0,'N': 0,'P': 0,'Q': 0,'R': 0,'S': 0,'T': 0,'V': 0,'W': 0,'Y': 0} # initial score
+        for base in self.seq:
+            if self.__validate_protein_seq(base) != False:
+                codon_base_dict[base] +=1
+            else:
+                return "AminoAcidError: {} not a valid Amino Acid Sequence".format(base)
+        return codon_base_dict
 
-	def __str__(self):
-		return self.seq 
+    def hamming_distance(self,other):
+        """Returns the edit distance for similarity using Hamming Distance of 2 Equal Length Sequence"""
+        if isinstance(other,ProteinSeq):# works instead of a str
+            return len([(x,y) for x,y in zip(self.seq,other) if x !=y])
+        else:
+            return f"Error: Not Implemented '{other}' Must be of a Protein Sequence Object"
 
-	def __len__(self):
-		return len(self.seq)
+    def back_translate(self):
+        """Returns a Probable Nucleotide Sequence of A Protein
 
-	def __contains__(self,sub_char):
-		return sub_char in str(self)
+        example:
+        >>> p2 = ProteinSeq('IKGLYPR')
+        >>> p2.back_translate()
+        'ATAAAAGGTTTATATCCTCGT'
 
-	def __getitem__(self,index):
-		if isinstance(index,int):
-			return self.seq[index]
-		else:
-			return Sequence(self.seq[index])
+        """
 
-	def __add__(self,other):
-		if isinstance(other,ProteinSeq):
-			return self.__class__(str(self) + str(other))
-		else:
-			return 'Error: NotImplemented ,Use A Valid Protein Sequence'
-
-	# Basic Fxn
-	def count(self,subseq,start=0,end=sys.maxsize):
-		return str(self).count(subseq,start,end)
-
-	def find(self,subseq,start=0,end=sys.maxsize):
-		return str(self).find(subseq,start,end)
-
-	def rfind(self,subseq,start=0,end=sys.maxsize):
-		return str(self).rfind(subseq,start,end)
-
-	def index(self,subseq,start=0,end=sys.maxsize):
-		return str(self).index(subseq,start,end)
-
-	def rindex(self,subseq,start=0,end=sys.maxsize):
-		return str(self).rindex(subseq,start,end)
-
-
-	def _validate_protein_seq(self,seq):
-	    codon_amino_acid = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
-	    real_seq = seq.upper()
-	    for base in real_seq:
-	        if base not in codon_amino_acid:
-	            return False
-	    return real_seq
-		
-
-	def get_symbol_frequency(self):
-	    codon_base_dict = {'A': 0,'C': 0,'D': 0,'E': 0,'F': 0,'G': 0,'H': 0,'I': 0,'K': 0,'L': 0,'M': 0,'N': 0,'P': 0,'Q': 0,'R': 0,'S': 0,'T': 0,'V': 0,'W': 0,'Y': 0} # initial score
-	    for base in self.seq:
-	        if self._validate_protein_seq(base) != False:
-	            codon_base_dict[base] +=1
-	        else:
-	            return "AminoAcidError: {} not a valid Amino Acid Sequence".format(base)
-	    return codon_base_dict
-
-
-# # GC Content
-# def gc_content(seq):
-# 	result = float(str(seq).count('G') + str(seq).count('C'))/len(seq) *100
-# 	return result
-
-# # AT Content
-# def at_content(seq):
-# 	result = float(str(seq).count('A') + str(seq).count('T'))/len(seq) *100
-# 	return result
-
-
-# 	# Get Keys
-# def get_key(val,my_dict):
-# 	for key,value in my_dict.items():
-# 		if val == value:
-# 			return key
-
-# def get_value(val,my_dict):
-# 	for key,value in my_dict.items():
-# 		if val == key:
-# 			return value
-
-
-# # Method 1: Converting 1 to 3 letter
-# def convert_1to3(seq):
-#     term_list = []
-#     for i in seq:
-#         res = get_key(i,aa3_to1_dict)
-#         term_list.append(res)
-#     return "".join(term_list)
-
-# def _kmers(seq,k=2):
-#     pair_list = []
-#     for i in range(0,len(seq),k):
-#         pair_list.append(seq[i:i+k])
-#     return pair_list
-
-# def convert_3to1(seq):
-#     term_list = []
-#     for i in _kmers(seq,k=3):
-#         res = get_value(i,aa3_to1_dict)
-#         term_list.append(res)
-#     return ''.join(term_list)
-
-# def get_kmers(seq,k=2):
-#     pair_list = []
-#     for i in range(0,len(seq),k):
-#         pair_list.append(str(seq)[i:i+k])
-#     return pair_list
-
-
-
-# def _delta(x,y):
-#     return 0 if x == y else 1
-
-
-# def _M(seq1,seq2,i,j,k):
-# 	return sum(_delta(x,y) for x,y in zip(seq1[i:i+k],seq2[j:j+k]))
-
-
-# def _makeMatrix(seq1,seq2,k):
-#     n = len(seq1)
-#     m = len(seq2)
-#     return [[_M(seq1,seq2,i,j,k) for j in range(m-k+1)] for i in range(n-k+1)]
-
-
-# def _plotMatrix(M,t, seq1, seq2, nonblank = chr(0x25A0), blank = ' '):
-#     print(' |' + seq2)
-#     print('-'*(2 + len(seq2)))
-#     for label,row in zip(seq1,M):
-#         line = ''.join(nonblank if s < t else blank for s in row)
-#         print(label + '|' + line)
-
-# def dotplot(seq1,seq2,k = 1,t = 1):
-# 	"""Create a Simple Dotplot(Black and white) of 2 sequences """
-# 	M = _makeMatrix(str(seq1),str(seq2),k)
-# 	_plotMatrix(M, t, str(seq1),str(seq2)) #experiment with character choice
+        base_nucleotide_list = []
+        for i in self.seq:
+            res = self.__get_codon_key(i)
+            base_nucleotide_list.append(res)
+        return ''.join(base_nucleotide_list)

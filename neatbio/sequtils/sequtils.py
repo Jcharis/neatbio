@@ -111,7 +111,7 @@ def __get_value(val,my_dict):
             return value
 
 
-def convert_1to3(seq):
+def convert_1to3(seq,allow_stop=True):
     """Convert 1 letter Amino Acid to 3 letter Amino Acid
 
     >>> convert_1to3('L')
@@ -119,9 +119,16 @@ def convert_1to3(seq):
 
     """
     term_list = []
-    for i in seq:
-        res = __get_key(i,aa3_to1_dict)
-        term_list.append(res)
+    if allow_stop ==True:
+        no_stop_seq = str(seq).replace('*','')
+        for i in no_stop_seq:
+            res = __get_key(i,aa3_to1_dict)
+            term_list.append(res)
+    else:
+        for i in seq:
+            res = __get_key(i,aa3_to1_dict)
+            term_list.append(res)
+
     return "".join(term_list)
 
 def __kmers(seq,k=2):
@@ -160,6 +167,55 @@ def hamming_distance(lhs,rhs):
 
     """
     return len([(x,y) for x,y in zip(lhs,rhs) if x !=y])
+
+
+def minimum_edit_distance(seq1,seq2):
+    """Returns The Minimum Edit distance optimized for memory
+    
+    source:https://rosettacode.org/wiki/Levenshtein_distance
+
+    """
+    if len(seq1) > len(seq2):
+        seq1,seq2 = seq2,seq1
+    distances = range(len(seq1) + 1)
+    for index2,char2 in enumerate(seq2):
+        newDistances = [index2+1]
+        for index1,char1 in enumerate(seq1):
+            if char1 == char2:
+                newDistances.append(distances[index1])
+            else:
+                newDistances.append(1 + min((distances[index1],
+                                             distances[index1+1],
+                                             newDistances[-1])))
+        distances = newDistances
+    return distances[-1]
+
+def levenshtein_distance(str1, str2):
+    """Returns the Levenshtein Distance and the ratio as compared to the entire sequence
+
+    source:https://rosettacode.org/wiki/Levenshtein_distance#Python
+
+    """
+    m = len(str1)
+    n = len(str2)
+    lensum = float(m + n)
+    d = []           
+    for i in range(m+1):
+        d.append([i])        
+    del d[0][0]    
+    for j in range(n+1):
+        d[0].append(j)       
+    for j in range(1,n+1):
+        for i in range(1,m+1):
+            if str1[i-1] == str2[j-1]:
+                d[i].insert(j,d[i-1][j-1])           
+            else:
+                minimum = min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+2)         
+                d[i].insert(j, minimum)
+    ldist = d[-1][-1]
+    ratio = (lensum - ldist)/lensum
+    return {'distance':ldist, 'ratio':ratio}
+
 
 def occurence(main_seq,sub_seq):
     """Check for the occurence of a sub sequence in a sequence

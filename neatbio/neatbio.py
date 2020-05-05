@@ -176,12 +176,12 @@ class Sequence(object):
     def get_symbol_frequency(self):
         """Get the Frequency of A Nucleotide in a Sequence """
         base_dict = {"A": 0, "T": 0, "G": 0, "C": 0}  # initial score
-        for base in self.seq:
-            if self.__validate_seq(base) != False:
+        if self.__validate_seq(str(self.seq)) != False:
+            for base in self.seq:
                 base_dict[base] += 1
-            else:
-                return "NucleotideError: {} not a nucleotide ['A,T,G,C']".format(base)
-            return base_dict
+        else:
+            return "NucleotideError: {} not a nucleotide ['A,T,G,C']".format(base)
+        return base_dict
 
     @property
     def gc(self):
@@ -221,14 +221,15 @@ class Sequence(object):
         """Return Complement of Sequence """
         base_pairs = {"A": "T", "T": "A", "G": "C", "C": "G"}
         comp_pairs = [base_pairs[a] for a in self.seq if a in base_pairs.keys()]
-        return "".join(comp_pairs)
+        result_complement = "".join(comp_pairs)
+        return Sequence(result_complement)
 
     def reverse_complement(self):
         """Return A Reverse Complement of Sequence """
         base_pairs = {"A": "T", "T": "A", "G": "C", "C": "G"}
         comp_pairs = [base_pairs[a] for a in self.seq if a in base_pairs.keys()]
         reverse_pairs = "".join(comp_pairs)[::-1]
-        return reverse_pairs
+        return Sequence(reverse_pairs)
 
     def transcribe(self):
         """Transcribe Sequence into mRNA """
@@ -347,12 +348,13 @@ class ProteinSeq(object):
 
 
     def get_symbol_frequency(self):
+        """Get the Frequency or Counts of Amino Acids"""
         codon_base_dict = {'A': 0,'C': 0,'D': 0,'E': 0,'F': 0,'G': 0,'H': 0,'I': 0,'K': 0,'L': 0,'M': 0,'N': 0,'P': 0,'Q': 0,'R': 0,'S': 0,'T': 0,'V': 0,'W': 0,'Y': 0,'*':0,'-':0} # initial score
-        for base in self.seq:
-            if self.__validate_protein_seq(base) != False:
+        if self.__validate_protein_seq(base) != False:
+            for base in self.seq:
                 codon_base_dict[base] +=1
-            else:
-                return "AminoAcidError: {} not a valid Amino Acid Sequence".format(base)
+        else:
+            return "AminoAcidError: {} not a valid Amino Acid Sequence".format(base)
         return codon_base_dict
 
     def hamming_distance(self,other):

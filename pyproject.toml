@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "neatbio"
-version = "0.0.1"
+version = "0.0.2"
 description = "NeatBio - a simple Yet Another BioInformatics Library for DNA Sequence"
 authors = ["Jesse E.Agbe(JCharis) <jcharistech@gmail.com>"]
 license = "MIT"

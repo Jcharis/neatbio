@@ -1,6 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from collections import Counter
 from itertools import groupby
+import math
 
 # Translate Table
 CodonTable = {
@@ -114,7 +115,7 @@ def convert_1to3(seq):
     """Convert 1 letter Amino Acid to 3 letter Amino Acid
 
     >>> convert_1to3('L')
-    >>> Lys
+    Lys
 
     """
     term_list = []
@@ -133,7 +134,7 @@ def convert_3to1(seq):
     """Convert 3 letter Amino Acid to 1 letter Amino Acid
 
     >>> convert_3to1('Lys')
-    >>> L
+    L
 
     """
     term_list = []
@@ -318,3 +319,47 @@ def read_fasta(fasta_name):
         # yield (headerStr, seq)
         result_record = {'header':headerStr,'seqRecord':seq}
         return result_record
+
+
+
+def melting_temp(seq):
+    """Using Wallace Method suitable for short strands of base pairs (14-20)
+
+    Tm = 2 °C(A + T) + 4 °C(G + C) = °C Tm
+    Tm = (wA+xT)*2 + (yG+zC)*4 w
+
+    """
+    Tm = sum([2*(str(seq).count('A')+ str(seq).count('T')) + 4*(str(seq).count('G')+ str(seq).count('C'))])
+    return "{}°C".format(Tm)
+
+def fahr_to_celsius(fahr):
+    """ Convert Fahrenheit to Celsius (F-32) + 5/9 """
+    result_in_celsius = (fahr - 32) + 5/9
+    return result_in_celsius
+
+
+def melting_temp_gc(seq):
+    """Return Melting Temp of Sequence Using Modified (Marmur and Doty, 1962) and  
+     (Howley et al., 1979) equations improved to Maximise Accuracy. 
+     The equation used is accurate for sequences in the 18-25mer range
+
+     `Tm = 100.5 + (41 * (yG+zC)/(wA+xT+yG+zC)) - (820/(wA+xT+yG+zC)) + 16.6*log10([0.050])
+     `
+    # source: https://academic.oup.com/bioinformatics/article/21/6/711/199347
+
+    """
+
+    Na = 0.050 # log10([Na+] adjusts for the salt adjustment at 50 mM Na+
+    total_nucleotide = sum([(seq.count('A') + seq.count('T') + seq.count('G')+ seq.count('C'))])
+
+    tm_marmurdoty = 64.9 + 41.0 * ((seq.count('G')+ seq.count('C')) -16.4 / total_nucleotide)
+
+    tm_howley = 100.5 + (41.0 * ((seq.count('G')+ seq.count('C')) -16.4 / total_nucleotide))
+
+    - (820.0/total_nucleotide) + 16.6 * math.log10(Na)
+   
+    result_tm = "Melting Temp by:: Marmur:{},Howley:{}".format(tm_marmurdoty,tm_howley)
+    return result_tm
+
+
+

@@ -4,7 +4,7 @@ from neatbio.sequtils import gc_content,at_content,get_acid_name
 
 
 def test_version():
-    assert __version__ == '0.0.1'
+    assert __version__ == '0.0.2'
 
 def test_issequence():
 	seq1 = nt.Sequence('ATGCTATGCTT')
@@ -29,7 +29,7 @@ def test_translate():
 def test_transcription():
 	seq1 = nt.Sequence('ATGCTATGCTT')
 	result = seq1.transcribe()
-	assert result == 'AUGCUAUGCUU'
+	assert str(result) == 'AUGCUAUGCUU'
 
 def test_nucleotide_freq():
 	seq1 = nt.Sequence('ATGCTATGCTT')
@@ -50,7 +50,7 @@ def test_isProteinsequence():
 def test_back_translate():
 	protein1 = nt.ProteinSeq('IKGLYLPR')
 	nucl_seq = protein1.back_translate()
-	assert nucl_seq == 'ATAAAAGGTTTATATTTACCTCGT'
+	assert str(nucl_seq) == 'ATAAAAGGTTTATATTTACCTCGT'
 
 def test_get_acid_name():
 	assert get_acid_name('Ala') == 'Alanine'

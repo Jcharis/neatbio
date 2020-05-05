@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import random
 import sys
 
@@ -232,20 +232,27 @@ class Sequence(object):
 
     def transcribe(self):
         """Transcribe Sequence into mRNA """
-        mrna_result = self.seq.replace("T", "U")
-        return mrna_result
+        return Sequence(self.seq.replace("T","U"))
 
     def back_transcribe(self):
         """Transcribe mRNA Sequence back into DNA """
         dna_result = self.seq.replace("U", "T")
-        return dna_result
+        return Sequence(dna_result)
 
     def translate(self, start_pos=0):
         """Translate Sequence into Protein/Amino Acids"""
-        amino_acids_list = [
+        # Convert mrna to dna for codontable
+        if 'U'in  self.seq:
+            self.seq = self.seq.replace("U","T")
+            amino_acids_list = [
+            CodonTable[self.seq[pos : pos + 3]]
+            for pos in range(start_pos, len(self.seq) - 2, 3)]
+        else:
+            amino_acids_list = [
             CodonTable[self.seq[pos : pos + 3]]
             for pos in range(start_pos, len(self.seq) - 2, 3)
-        ]
+            ]
+
         return "".join(amino_acids_list)
 
     def hamming_distance(self,other):
@@ -369,4 +376,36 @@ class ProteinSeq(object):
         for i in self.seq:
             res = self.__get_codon_key(i)
             base_nucleotide_list.append(res)
-        return ''.join(base_nucleotide_list)
+        return Sequence(''.join(base_nucleotide_list))
+
+
+    def get_amino_acid_percentage(self):
+        """Returns a Dictionary of Percentage of Amino Acid for the Sequence"""
+        percentages = {}
+
+        aminoacid_freq = self.get_symbol_frequency()
+
+        for acid in aminoacid_freq:
+            percentages[acid] = aminoacid_freq[acid]/float(len(self.seq))
+
+        return percentages
+
+    def aromaticity(self):
+        """Returns the Lobry Aromaticity using the relative frequency of 
+        sum of Phe,Trp,Tyr
+        """
+        acid_percentage = self.get_amino_acid_percentage()
+        aromaticity_score = sum(acid_percentage[acid] for acid in "YWF")
+        return aromaticity_score
+
+    def molar_coeff(self):
+        """Returns the Molar Extinction Coefficient
+        using Cys-Cys bond
+        
+        """
+        aminoacid_freq = self.get_symbol_frequency()
+        m_coef_reduced  = aminoacid_freq["W"] * 5500 + aminoacid_freq["Y"] * 1490
+        m_coef_cystine_bond = m_coef_reduced + (aminoacid_freq["C"]// 2) * 125
+        return {'Reduced':m_coef_reduced,"Cys-Cys Residue":m_coef_cystine_bond}
+
+

@@ -59,6 +59,10 @@ Handling Sequences
     >>> seq1.translate()
     'MH*'
     >>> seq1.translate
+    >>>
+    >>> rna_seq = nt.Sequence("AUGCAUUGA","RNA")
+    >>> rna_seq.seqtype
+    >>> Sequence(seq='AUGCAUUGA',seqtype='RNA')
 
 Working with Proteins
 ---------------------

@@ -408,13 +408,14 @@ def melting_temp_gc(seq):
     Na = 0.050 # log10([Na+] adjusts for the salt adjustment at 50 mM Na+
     total_nucleotide = sum([(seq.count('A') + seq.count('T') + seq.count('G')+ seq.count('C'))])
 
-    tm_marmurdoty = 64.9 + 41.0 * ((seq.count('G')+ seq.count('C')) -16.4 / total_nucleotide)
+    tm_marmurdoty = 64.9 + 41.0 * (((seq.count('G')+ seq.count('C')) -16.4)/ total_nucleotide)
 
-    tm_howley = 100.5 + (41.0 * ((seq.count('G')+ seq.count('C')) -16.4 / total_nucleotide))
+    tm_howley = 100.5 + 41.0 * (((seq.count('G')+ seq.count('C')) -16.4 )/ total_nucleotide)
 
     - (820.0/total_nucleotide) + 16.6 * math.log10(Na)
    
-    result_tm = "Melting Temp by:: Marmur:{},Howley:{}".format(tm_marmurdoty,tm_howley)
+    # result_tm = "Melting Temp by:: Marmur:{},Howley:{}".format(tm_marmurdoty,tm_howley)
+    result_tm = {"mt_marmur":tm_marmurdoty,"mt_howley":tm_howley}
     return result_tm
 
 

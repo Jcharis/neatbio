@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import random
 import sys
 
@@ -80,7 +80,7 @@ class Sequence(object):
 
     """
 
-    def __init__(self, seq=None):
+    def __init__(self, seq=None,seqtype="DNA"):
         """Creat A Sequence Object
         
         Arguments:
@@ -94,15 +94,18 @@ class Sequence(object):
         """
         super(Sequence, self).__init__()
         self.seq = seq
+        self.seqtype = seqtype
+        self.is_dna = self.__check_sequence_type()
+        assert self.is_dna, f'Sequence Type Not A {self.seqtype}, Please set seqtype as "RNA" '
 
         # To enforce a string storage
         if not isinstance(self.__validate_seq(seq), str):
             raise TypeError("The sequence data given to a Sequence object should "
                 "be a string (not another Sequence object etc)","nor a non Nucleotide [A,C,T,G,U]")
-    
+        
 
     def __repr__(self):
-        return "Sequence(seq='{}')".format(self.seq)
+        return "Sequence(seq='{}',seqtype='{}')".format(self.seq,self.seqtype)
 
     def __str__(self):
         return self.seq
@@ -114,6 +117,13 @@ class Sequence(object):
             if base not in base_nucleotide:
                 return False
         return real_seq
+
+    def __check_sequence_type(self):
+        if "U" not in self.seq:
+            return self.seqtype == "DNA"
+        else:
+            return self.seqtype == "RNA"
+    
 
     def __len__(self):
         return len(self.seq)
@@ -233,7 +243,7 @@ class Sequence(object):
 
     def transcribe(self):
         """Transcribe Sequence into mRNA """
-        return Sequence(self.seq.replace("T","U"))
+        return Sequence(self.seq.replace("T","U"),"RNA")
 
     def back_transcribe(self):
         """Transcribe mRNA Sequence back into DNA """
